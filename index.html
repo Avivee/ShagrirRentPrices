@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחירי השכרה שגריר</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            text-align: center;
+        }
+        table {
+            margin: 20px auto;
+            border-collapse: collapse;
+            width: 80%;
+        }
+        table, th, td {
+            border: 1px solid #ccc;
+        }
+        th {
+            background-color: #0073e6;
+            color: white;
+            padding: 10px;
+        }
+        td {
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>מחירי השכרה שגריר</h1>
+    <table id="excel-table"></table>
+
+    <script>
+        async function fetchAndDisplayExcel() {
+            const response = await fetch('./file.xlsx'); // מחליף את 'file.xlsx' בשם קובץ ה-XLSX שלך
+            const data = await response.arrayBuffer();
+
+            // קריאת קובץ ה-XLSX
+            const workbook = XLSX.read(data, { type: 'array' });
+
+            // בחר את הגיליון הראשון
+            const sheetName = workbook.SheetNames[0];
+            const sheet = workbook.Sheets[sheetName];
+
+            // המר את הגיליון לטבלה
+            const rows = XLSX.utils.sheet_to_json(sheet, { header: 1 });
+
+            // הצגת הנתונים בטבלה HTML
+            const table = document.getElementById('excel-table');
+            rows.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                row.forEach(cell => {
+                    const td = document.createElement(index === 0 ? 'th' : 'td');
+                    td.textContent = cell;
+                    tr.appendChild(td);
+                });
+                table.appendChild(tr);
+            });
+        }
+
+        fetchAndDisplayExcel();
+    </script>
+</body>
+</html>
